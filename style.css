@@ -62,7 +62,11 @@ button {
     font-size: 0.8rem;
     width: 10%;
   }
-
+    
+  #result,#probResult {
+    font-size: 1rem;
+  }
+    
   canvas {
     width: 95vw;
     max-width: 100%;
