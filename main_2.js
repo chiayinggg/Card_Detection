@@ -136,7 +136,9 @@ function openCamera() {
   video.style.display = "block";
   snapButton.style.display = "inline-block";
 
-  navigator.mediaDevices.getUserMedia({ video: true })
+  navigator.mediaDevices.getUserMedia({
+    video: { facingMode: {exact: "environment"}}
+  })
     .then(stream => {
       video.srcObject = stream;
     })
