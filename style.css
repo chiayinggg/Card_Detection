@@ -34,7 +34,7 @@ button {
   font-size: 14px;
 }
 
-@media (max-width: 450px) {
+@media (max-width: 250px) {
   h1 {
     font-size: 1.4rem;
     text-align: center;
