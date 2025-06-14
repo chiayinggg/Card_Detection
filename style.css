@@ -34,12 +34,17 @@ button {
   font-size: 14px;
 }
 
-@media {
-    h1 {
-        font-size: 1.5rem;
-    }
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.4rem;
+    text-align: center;
+  }
 
-    canvas {
-        width: 95%;
-    }
+  canvas {
+    width: 95vw;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: auto;
+  }
 }
