@@ -137,14 +137,14 @@ function openCamera() {
   snapButton.style.display = "inline-block";
 
   navigator.mediaDevices.getUserMedia({
-    video: { facingMode: {exact: "environment"}}
+    video: { facingMode: {ideal: "environment"}}
   })
-    .then(stream => {
-      video.srcObject = stream;
-    })
-    .catch(err => {
-      alert("無法開啟鏡頭：" + err.message);
-    });
+  .then(stream => {
+    video.srcObject = stream;
+  })
+  .catch(err => {
+    alert("無法開啟鏡頭：" + err.message);
+  });
 }
 
 
