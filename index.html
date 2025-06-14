@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>射龍門區間勝率判斷</title>
+        <link rel="stylesheet" href="style.css" />
+        <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+    </head>
+    <body>
+        <div class="container" id="title">
+            <h1 style="font-size:2.5rem;">射龍門區間勝率判斷</h1>
+        </div>
+        <div class="container" id="payout">
+            <p style="font-size:1.2rem; font-weight:bold;">請輸入區間倍率</p>
+            <p>若card A = card B</p>
+            撞柱賠率：<input type="text" id="eq_hit" size="5" />
+            柱以上、以下賠率：<input type="text" id="eq_uplw" size="5" />
+            <p>若card A、card B連續</p>
+            撞柱賠率：<input type="text" id="con_hit" size="5" />
+            柱以上、以下賠率：<input type="text" id="con_uplw" size="5" />
+            <p>若card A - card B > 1</p>
+            撞柱賠率：<input type="text" id="gen_hit" size="5" />
+            柱以上、以下賠率：<input type="text" id="gen_uplw" size="5" />
+            兩柱之間賠率：<input type="text" id="gen_betw" size="5" />
+            <p></p>
+            <button type="submit" id="submit">送出</button>
+        </div>
+        <div class="container" id="upload">
+            <p style="font-size:1.2rem; font-weight:bold;">請拍照或上傳撲克牌照片</p>
+            <input type="file" accept="image/*" id="imageUpload" />
+            <p></p>
+            <button id="camera">開啟鏡頭</button>
+            <button id="snap" style="display: none;">拍照</button>
+            <button id="reset">重新開始</button>
+            <p></p>
+            <button id="record" style="display: none;">記錄牌面</button>
+            <button id="probability" style="display: none;">計算勝率</button>
+        </div>
+
+        <div class="container">
+            <video id="video" width="60%" height="auto" autoplay style="display: none;"></video>
+            <canvas id="canvas" width="60%" height="auto"></canvas>
+        </div>
+
+        <div class="container" id="result">
+            <h2>辨識結果</h2>
+        </div>
+
+        <pre class="container" id="probResult" style="display:none">
+            <h2>勝率計算結果</h2>
+        </pre>
+
+        <script src="main_2.js"></script>
+    </body>
+</html>

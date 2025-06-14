@@ -1,0 +1,45 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2efe1;
+    color: #333;
+    text-align: center;
+}
+
+.container {
+    margin: 0 auto;
+    padding: 10px;
+}
+
+input[type="file"] {
+    padding-left: 85px;
+}
+
+canvas {
+    width: 50%;
+    height: auto;
+    margin-top: 20px;
+}
+
+#result, #probResult {
+    font-size: 1.2rem;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+button {
+  margin: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+@media {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    canvas {
+        width: 95%;
+    }
+}
