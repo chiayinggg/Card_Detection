@@ -128,42 +128,6 @@ async function snap() {
   probButton.style.display = "inline-block";
   game.clear();
 
-  const resizedCanvas = document.createElement("canvas");
-  resizedCanvas.width = 640;
-  resizedCanvas.height = 640;
-  const resizedCtx = resizedCanvas.getContext("2d");
-  resizedCtx.drawImage(canvas, 0, 0, 640, 640);
-
-  const imageData = resizedCtx.getImageData(0, 0, 640, 640).data;
-  const input = new Float32Array(1 * 3 * 640 * 640);
-
-  for (let i = 0; i < 640 * 640; i++) {
-    input[i] = imageData[i * 4] / 255;             // R
-    input[i + 640 * 640] = imageData[i * 4 + 1] / 255; // G
-    input[i + 2 * 640 * 640] = imageData[i * 4 + 2] / 255; // B
-  }
-
-  const tensor = new ort.Tensor("float32", input, [1, 3, 640, 640]);
-  const feeds = {};
-  feeds[session.inputNames[0]] = tensor;
-
-  const output = await session.run(feeds);
-  const outputTensor = output[session.outputNames[0]].data; // Float32Array
-
-  document.getElementById("record").addEventListener("click", async () => {
-    recordButton.style.display = "none";
-    probButton.style.display = "none";
-
-    drawBoxes(outputTensor, canvas);
-    document.getElementById("probResult").style.display = "none";
-  });
-  document.getElementById("probability").addEventListener("click", async () => {
-    recordButton.style.display = "none";
-    probButton.style.display = "none";
-
-    drawBoxes(outputTensor, canvas);
-    ProbabilityCalculaiton();
-  });
 }
 
 function openCamera() {
