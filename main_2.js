@@ -28,6 +28,24 @@ document.getElementById("submit").addEventListener("click", ()=>{
 });
 
 
+const recordButton = document.getElementById("record");
+const probButton = document.getElementById("probability");
+document.getElementById("record").addEventListener("click", async () => {
+  recordButton.style.display = "none";
+  probButton.style.display = "none";
+
+  await PredictionAndDraw(document.getElementById("canvas"));
+  document.getElementById("probResult").style.display = "none";
+});
+
+document.getElementById("probability").addEventListener("click", async () => {
+  recordButton.style.display = "none";
+  probButton.style.display = "none";
+
+  await PredictionAndDraw(document.getElementById("canvas"));
+  ProbabilityCalculaiton();
+});
+
 
 let session = null;
 const classNames = [
@@ -69,6 +87,7 @@ function handleImageUpload(event) {
     const ctx = canvas.getContext("2d");
     canvas.width = img.width;
     canvas.height = img.height;
+
     ctx.drawImage(img, 0, 0);
 
     const recordButton = document.getElementById("record");
@@ -77,63 +96,6 @@ function handleImageUpload(event) {
     recordButton.style.display = "inline-block";
     probButton.style.display = "inline-block";
     game.clear();
-
-    document.getElementById("record").addEventListener("click", async () => {
-      recordButton.style.display = "none";
-      probButton.style.display = "none";
-
-      const resizedCanvas = document.createElement("canvas");
-      resizedCanvas.width = 640;
-      resizedCanvas.height = 640;
-      const resizedCtx = resizedCanvas.getContext("2d");
-      resizedCtx.drawImage(canvas, 0, 0, 640, 640);
-
-      const imageData = resizedCtx.getImageData(0, 0, 640, 640).data;
-      const input = new Float32Array(1 * 3 * 640 * 640);
-
-      for (let i = 0; i < 640 * 640; i++) {
-        input[i] = imageData[i * 4] / 255;             // R
-        input[i + 640 * 640] = imageData[i * 4 + 1] / 255; // G
-        input[i + 2 * 640 * 640] = imageData[i * 4 + 2] / 255; // B
-      }
-
-      const tensor = new ort.Tensor("float32", input, [1, 3, 640, 640]);
-      const feeds = {};
-      feeds[session.inputNames[0]] = tensor;
-
-      const output = await session.run(feeds);
-      const outputTensor = output[session.outputNames[0]].data; // Float32Array
-      drawBoxes(outputTensor, canvas);
-      document.getElementById("probResult").style.display = "none";
-    });
-    document.getElementById("probability").addEventListener("click", async () => {
-      recordButton.style.display = "none";
-      probButton.style.display = "none";
-      
-      const resizedCanvas = document.createElement("canvas");
-      resizedCanvas.width = 640;
-      resizedCanvas.height = 640;
-      const resizedCtx = resizedCanvas.getContext("2d");
-      resizedCtx.drawImage(canvas, 0, 0, 640, 640);
-
-      const imageData = resizedCtx.getImageData(0, 0, 640, 640).data;
-      const input = new Float32Array(1 * 3 * 640 * 640);
-
-      for (let i = 0; i < 640 * 640; i++) {
-        input[i] = imageData[i * 4] / 255;             // R
-        input[i + 640 * 640] = imageData[i * 4 + 1] / 255; // G
-        input[i + 2 * 640 * 640] = imageData[i * 4 + 2] / 255; // B
-      }
-
-      const tensor = new ort.Tensor("float32", input, [1, 3, 640, 640]);
-      const feeds = {};
-      feeds[session.inputNames[0]] = tensor;
-
-      const output = await session.run(feeds);
-      const outputTensor = output[session.outputNames[0]].data; // Float32Array
-      drawBoxes(outputTensor, canvas);
-      ProbabilityCalculaiton();
-    });
   };
 
   img.src = URL.createObjectURL(file);
@@ -146,6 +108,9 @@ async function snap() {
 
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height); //清空畫布
+
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
   // ✅ 拍完照就關閉鏡頭
@@ -163,31 +128,32 @@ async function snap() {
   probButton.style.display = "inline-block";
   game.clear();
 
+  const resizedCanvas = document.createElement("canvas");
+  resizedCanvas.width = 640;
+  resizedCanvas.height = 640;
+  const resizedCtx = resizedCanvas.getContext("2d");
+  resizedCtx.drawImage(canvas, 0, 0, 640, 640);
+
+  const imageData = resizedCtx.getImageData(0, 0, 640, 640).data;
+  const input = new Float32Array(1 * 3 * 640 * 640);
+
+  for (let i = 0; i < 640 * 640; i++) {
+    input[i] = imageData[i * 4] / 255;             // R
+    input[i + 640 * 640] = imageData[i * 4 + 1] / 255; // G
+    input[i + 2 * 640 * 640] = imageData[i * 4 + 2] / 255; // B
+  }
+
+  const tensor = new ort.Tensor("float32", input, [1, 3, 640, 640]);
+  const feeds = {};
+  feeds[session.inputNames[0]] = tensor;
+
+  const output = await session.run(feeds);
+  const outputTensor = output[session.outputNames[0]].data; // Float32Array
+
   document.getElementById("record").addEventListener("click", async () => {
     recordButton.style.display = "none";
     probButton.style.display = "none";
 
-    const resizedCanvas = document.createElement("canvas");
-    resizedCanvas.width = 640;
-    resizedCanvas.height = 640;
-    const resizedCtx = resizedCanvas.getContext("2d");
-    resizedCtx.drawImage(canvas, 0, 0, 640, 640);
-
-    const imageData = resizedCtx.getImageData(0, 0, 640, 640).data;
-    const input = new Float32Array(1 * 3 * 640 * 640);
-
-    for (let i = 0; i < 640 * 640; i++) {
-      input[i] = imageData[i * 4] / 255;             // R
-      input[i + 640 * 640] = imageData[i * 4 + 1] / 255; // G
-      input[i + 2 * 640 * 640] = imageData[i * 4 + 2] / 255; // B
-    }
-
-    const tensor = new ort.Tensor("float32", input, [1, 3, 640, 640]);
-    const feeds = {};
-    feeds[session.inputNames[0]] = tensor;
-
-    const output = await session.run(feeds);
-    const outputTensor = output[session.outputNames[0]].data; // Float32Array
     drawBoxes(outputTensor, canvas);
     document.getElementById("probResult").style.display = "none";
   });
@@ -195,27 +161,6 @@ async function snap() {
     recordButton.style.display = "none";
     probButton.style.display = "none";
 
-    const resizedCanvas = document.createElement("canvas");
-    resizedCanvas.width = 640;
-    resizedCanvas.height = 640;
-    const resizedCtx = resizedCanvas.getContext("2d");
-    resizedCtx.drawImage(canvas, 0, 0, 640, 640);
-
-    const imageData = resizedCtx.getImageData(0, 0, 640, 640).data;
-    const input = new Float32Array(1 * 3 * 640 * 640);
-
-    for (let i = 0; i < 640 * 640; i++) {
-      input[i] = imageData[i * 4] / 255;             // R
-      input[i + 640 * 640] = imageData[i * 4 + 1] / 255; // G
-      input[i + 2 * 640 * 640] = imageData[i * 4 + 2] / 255; // B
-    }
-
-    const tensor = new ort.Tensor("float32", input, [1, 3, 640, 640]);
-    const feeds = {};
-    feeds[session.inputNames[0]] = tensor;
-
-    const output = await session.run(feeds);
-    const outputTensor = output[session.outputNames[0]].data; // Float32Array
     drawBoxes(outputTensor, canvas);
     ProbabilityCalculaiton();
   });
@@ -259,7 +204,31 @@ function resetGame() {
 }
 
 
-function drawBoxes(data, canvas) {
+async function PredictionAndDraw(canvas) {
+  const resizedCanvas = document.createElement("canvas");
+  resizedCanvas.width = 640;
+  resizedCanvas.height = 640;
+  const resizedCtx = resizedCanvas.getContext("2d");
+  resizedCtx.drawImage(canvas, 0, 0, 640, 640);
+
+  const imageData = resizedCtx.getImageData(0, 0, 640, 640).data;
+  const input = new Float32Array(1 * 3 * 640 * 640);
+
+  for (let i = 0; i < 640 * 640; i++) {
+    input[i] = imageData[i * 4] / 255;             // R
+    input[i + 640 * 640] = imageData[i * 4 + 1] / 255; // G
+    input[i + 2 * 640 * 640] = imageData[i * 4 + 2] / 255; // B
+  }
+
+  const tensor = new ort.Tensor("float32", input, [1, 3, 640, 640]);
+  const feeds = {};
+  feeds[session.inputNames[0]] = tensor;
+
+  const output = await session.run(feeds);
+  const outputTensor = output[session.outputNames[0]].data; // Float32Array
+
+  const data = outputTensor;
+
   function sigmoid(x) {
     return 1 / (1 + Math.exp(-x));
   }
